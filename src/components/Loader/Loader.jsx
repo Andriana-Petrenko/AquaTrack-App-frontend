@@ -5,7 +5,7 @@ const Loader = () => {
   return (
 <div className={css.loader}>
     <FallingLines
-  color="rgb(99, 99, 141)"
+  color="rgb(155, 225, 160)"
   width="100"
   visible={true}
   ariaLabel="falling-circles-loading"

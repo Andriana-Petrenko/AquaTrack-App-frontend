@@ -2,45 +2,42 @@ import './App.css'
 import { useDispatch} from 'react-redux';
 import { useEffect } from 'react';
 import { lazy } from 'react';
-import Layout from './Layout/Layout';
+
 import { Route, Routes } from 'react-router-dom';
-import { refreshUser } from '../redux/auth/operations';
-import NoFoundPage from '../pages/NoFoundPage/NoFoundPage';
 import RestrictedRoute from './RestrictedRoute/RestrictedRoute';
 import PrivateRoute from './PrivateRoute/PrivateRoute';
-
-
-
-
+import SharedLayout from './SharedLayout/SharedLayout';
 
 const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
-const RegisterPage = lazy(() => import('../pages/RegisterPage/RegisterPage'));
-const LoginPage = lazy(() => import('../pages/LoginPage/LoginPage'));
-const ContactsPage = lazy(() => import('../pages/ContactsPage/ContactsPage'));
+const SignUpPage = lazy(() => import('../pages/SignUpPage/SignUpPage'));
+const SignInPage = lazy(() => import('../pages/SignInPage/SignInPage'));
+const TrackerPage = lazy(() => import('../pages/TrackerPage/TrackerPage'));
+const NoFoundPage = lazy(() => import('../pages/NoFoundPage/NoFoundPage'));
 
 function App() { 
   const dispatch = useDispatch();
 
 
-  useEffect(() => {
-    dispatch(refreshUser());    
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(refreshUser());    
+  // }, [dispatch]);
 
   return  (<>
-      <Layout>
+      <SharedLayout>
       <Routes>
         <Route path="/" element={<HomePage />} />
-          <Route path="/register" element={
+          <Route path="/signup" element={
             <RestrictedRoute>
-              <RegisterPage />
+              <SignUpPage />
             </RestrictedRoute>} />
-        <Route path="/login" element={<RestrictedRoute>
-              <LoginPage />
+        <Route path="/signin" element={
+            <RestrictedRoute>
+              <SignInPage />
             </RestrictedRoute>} />
-          <Route path="/contacts" element={<PrivateRoute><ContactsPage /></PrivateRoute>} />
+          <Route path="/tracker" element={<PrivateRoute><TrackerPage /></PrivateRoute>} />
           <Route path="*" element={<NoFoundPage/>}/>
         </Routes>
-    </Layout>
+    </SharedLayout>
       
   </>
   )

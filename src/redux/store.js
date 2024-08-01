@@ -1,6 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { contactsReducer } from './contacts/slice';
-import { filtersReducer } from './filters/slice';
 import { authReducer } from './auth/slice';
 import {
   persistStore,
@@ -13,18 +11,18 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { waterReducer } from './water/slice';
 
 
 const authPersistConfig = {
   key: "auth",
   storage,
-  whitelist: ["token"],
+  whitelist: ['accessToken', 'isLoggedIn'],
 };
 
 export const store = configureStore({
   reducer: {
-    contacts:contactsReducer,
-    filters: filtersReducer,
+    water:waterReducer,
     auth:persistReducer(authPersistConfig, authReducer),
   },
   middleware: (getDefaultMiddleware) =>

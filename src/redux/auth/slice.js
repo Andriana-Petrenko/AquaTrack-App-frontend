@@ -1,73 +1,64 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login, logout, refreshUser, register } from "./operations";
+import { login, logout, register } from "./operations";
+import { initialState } from "./initialState";
 
-export const AUTH_INITIAL_STATE={
-    user: {
-        name: null,
-        email: null,
-    },
-    token: null,
-  isLoggedIn: false,
-  isRefreshing: false,
-  isLoading: false,
-  isError: false,
-}
-
-const handleRejected = (state) => {
+const handleRejected = (state, action) => {
   state.isLoading = false;
-  state.isError = true;
+  state.error = action.payload;
 }
 
 const handlePending = (state) => {
   state.isLoading = true;
-  state.isError = false;
+  state.error = null;
 }
 
 const slice = createSlice({
   name: 'auth',
-  initialState: AUTH_INITIAL_STATE,
-    extraReducers: (builder) =>
+  initialState: initialState,
+
+  extraReducers: builder => {
     builder
+      //register
       .addCase(register.pending, handlePending)
-      .addCase(login.pending, handlePending)
-      
-      .addCase(register.rejected, handleRejected)
-      .addCase(login.rejected, handleRejected)
-      .addCase(refreshUser.rejected, handleRejected)
-        
       .addCase(register.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isLoggedIn = true;
         state.isLoading = false;
+        state.isLoggedIn = true;
+        state.accessToken = action.payload.accessToken;
       })
+      .addCase(register.rejected, handleRejected)
+      //login
+      .addCase(login.pending, handlePending)
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
         state.isLoggedIn = true;
+        state.accessToken = action.payload.accessToken;
       })
-           
-      .addCase(refreshUser.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.isLoggedIn = true;
-        state.isRefreshing = false;
-        state.isLoading = false; 
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.user = { name: null, email: null };
-        state.token = null;
-        state.isLoggedIn = false;
-        state.isLoading = false;
-      })
-        
-    .addCase(refreshUser.pending, (state) => {
-      state.isRefreshing = true;
-      state.isLoading = true;
-    }) 
-  },
+      .addCase(login.rejected, handleRejected)
+      
+      //refresh
 
-  
-);
+      // .addCase(refreshUser.pending, handlePending, state => {
+      //   state.isRefreshing = true;
+      // })
+      // .addCase(refreshUser.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.isRefreshing = false;
+      //   state.isLoggedIn = true;
+      //   state.accessToken = action.payload.accessToken;
+      // })
+      // .addCase(refreshUser.rejected, handleRejected, state => {
+      //   state.isRefreshing = true;
+      // })
+
+      // logout
+      .addCase(logout.pending, handlePending)
+      .addCase(logout.fulfilled, () => {
+        return initialState;
+      })
+      .addCase(logout.rejected, handleRejected)
+      
+  },
+});
+
 
 export const authReducer = slice.reducer;
